@@ -26,7 +26,7 @@ type alias Model =
 
 init : Maybe Auth0.LoggedInUser -> ( Model, Cmd Msg )
 init initialUser =
-    ( Model (Authentication.init auth0showLock auth0logout initialUser), Cmd.none )
+    ( Model (Authentication.init auth0authorize auth0logout initialUser), Cmd.none )
 
 
 -- Messages
@@ -37,7 +37,7 @@ type Msg
 
 -- Ports
 
-port auth0showLock : Auth0.Options -> Cmd msg
+port auth0authorize : Auth0.Options -> Cmd msg
 port auth0authResult : (Auth0.RawAuthenticationResult -> msg) -> Sub msg
 port auth0logout : () -> Cmd msg
 
@@ -75,9 +75,7 @@ view model =
                         [ p [] [ text "Please log in" ] ]
 
                     Just user ->
-                        [ p [] [ img [ src user.picture ] [] ]
-                        , p [] [ text ("Hello, " ++ user.name ++ "!") ]
-                        ]
+                        [ p [] [ text ("Hello, " ++ user.email ++ "!") ] ]
                 )
             , p []
                 [ button
@@ -93,9 +91,9 @@ view model =
                     ]
                     [ text
                         (if Authentication.isLoggedIn model.authModel then
-                            "Logout"
+                            "Log Out"
                             else
-                            "Login"
+                            "Log In"
                         )
                     ]
                 ]
